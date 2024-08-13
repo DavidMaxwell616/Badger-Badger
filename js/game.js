@@ -50,7 +50,6 @@ function createBadger(scene){
   var badgerY = game.config.height * Phaser.Math.FloatBetween(HORIZON, .9);
   var badgerScale = Math.abs(((game.config.height*HORIZON)-badgerY)/200);
   var badger = scene.add.sprite(badgerX, badgerY, 'badger');
-  console.log(badgerScale,badgerY);
   badger.setScale(badgerScale);
   scene.anims.create({
   key: 'badgerDance'+numBadgers,
@@ -63,6 +62,7 @@ function createBadger(scene){
   repeat: -1
 });
 badger.anims.play('badgerDance'+numBadgers);
+badger.setDepth(badgerScale);
 badgers.push[badger];
 numBadgers++;
 }
