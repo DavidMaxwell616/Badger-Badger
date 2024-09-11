@@ -4,18 +4,22 @@ var music;
 var background;
 var badgers = [];
 var numBadgers = 0;
-const MAX_BADGERS = 10;
-const HORIZON = .46;
+var startButton;
+var startGame = false;
+const MAX_BADGERS = 12;
+const HORIZON = .43;
 var badgerCounter=0;
+var scene;
 
 class Example extends Phaser.Scene {
   constructor() {
     super();
   }
-
   preload() {
+    scene = this;
     this.load.path = './assets/images/';
     this.load.image('background','background.png');
+    this.load.image('startButton','start button.png');
     this.load.spritesheet('badger', 'badger.png', { frameWidth: 320, frameHeight: 300 });
 
     this.load.path = '../assets/sounds/';
@@ -24,25 +28,32 @@ class Example extends Phaser.Scene {
 
   create() {
     background = this.add.image(0,0,'background').setOrigin(0,0).setScale(2);
- 
-    //   music = this.sound.add('theme');
-    //   timer = this.time.addEvent({
-    //     delay: 5000,
-    //     callback: ()=>{music.play()},
-    //     loop: false
-    // });
-      
-  }
+    startButton = this.add.image(config.width*.3,config.height*.4,'startButton').setOrigin(0,0).setScale(3); 
+    startButton.setInteractive();
+    startButton.on('pointerdown', () => 
+      {
+        buttonDown();
+        startGame = true;
+      });
+    
+ }
   update() {
-    if(numBadgers < MAX_BADGERS)   
+if(startGame)
+{
+      if(numBadgers < MAX_BADGERS)   
     {
-      if(++badgerCounter>100)
+      if(++badgerCounter>50)
       {
       createBadger(this);
       badgerCounter=0;
     }  
   }
-  }
+   }   
+}
+}
+function buttonDown() {
+    music = scene.sound.add('theme');
+    startButton.visible = false;
 }
 
 function createBadger(scene){
