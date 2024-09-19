@@ -9,7 +9,10 @@ var startGame = false;
 const MAX_BADGERS = 12;
 const HORIZON = .43;
 var badgerCounter=0;
+var mushroomCounter = 0;
 var scene;
+var mushroom1;
+var mushroom2;
 var badgerPhase = true;
 var mushroomPhase = false;
 var snakePhase = false;
@@ -23,6 +26,7 @@ class Example extends Phaser.Scene {
     this.load.path = './assets/images/';
     this.load.image('background','background.png');
     this.load.image('startButton','start button.png');
+    this.load.image('mushroom','mushroom.png');
     this.load.spritesheet('badger', 'badger.png', { frameWidth: 320, frameHeight: 300 });
 
     this.load.path = '../assets/sounds/';
@@ -54,18 +58,28 @@ class Example extends Phaser.Scene {
       }
       else
       {
-        console.log(badgers.children);
-        if(badgers.count>0) 
-        {
-          badgers.destroy();
-        }
-      numBadgers = 0;
+        let allSprites = this.children.list.filter(x => x instanceof Phaser.GameObjects.Sprite && x.name=='badger');
+        allSprites.forEach(x => x.destroy());
+        numBadgers = 0;
+        
       badgerPhase = false;
       mushroomPhase = true;
     }
   } 
 if(mushroomPhase)
   {
+
+    mushroom1 = this.add.image(0,game.config.height/2,'mushroom').setOrigin(0,0).setScale(.5);
+    if(++mushroomCounter>100)
+    {
+      this.add.image(400,game.config.height/2,'mushroom').setOrigin(0,0).setScale(.5);
+    }
+    if(mushroomCounter>200)
+    {
+      mushroom1.destroy();
+      badgerPhase = true;
+      mushroomPhase = false;
+    }
   }
 } 
 }
@@ -92,7 +106,8 @@ function createBadger(scene){
 });
 badger.anims.play('badgerDance'+numBadgers);
 badger.setDepth(badgerScale);
-badgers.add[badger];
+badger.name='badger';
+badgers.create(badger);
 numBadgers++;
 }
   
