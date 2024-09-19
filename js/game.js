@@ -2,7 +2,7 @@ var anim;
 var timer;
 var music;
 var background;
-var badgers = [];
+var badgers;
 var numBadgers = 0;
 var startButton;
 var startGame = false;
@@ -10,6 +10,9 @@ const MAX_BADGERS = 12;
 const HORIZON = .43;
 var badgerCounter=0;
 var scene;
+var badgerPhase = true;
+var mushroomPhase = false;
+var snakePhase = false;
 
 class Example extends Phaser.Scene {
   constructor() {
@@ -35,21 +38,36 @@ class Example extends Phaser.Scene {
         buttonDown();
         startGame = true;
       });
-    
+      badgers = this.add.group();  
  }
   update() {
-if(startGame)
-{
+  if(startGame)
+  {
+    if(badgerPhase)
       if(numBadgers < MAX_BADGERS)   
-    {
-      if(++badgerCounter>50)
+       {
+        if(++badgerCounter>50)
+        {
+        createBadger(this);
+        badgerCounter=0;
+        }
+      }
+      else
       {
-      createBadger(this);
-      badgerCounter=0;
-    }  
+        console.log(badgers.children);
+        if(badgers.count>0) 
+        {
+          badgers.destroy();
+        }
+      numBadgers = 0;
+      badgerPhase = false;
+      mushroomPhase = true;
+    }
+  } 
+if(mushroomPhase)
+  {
   }
-   }   
-}
+} 
 }
 function buttonDown() {
     music = scene.sound.add('theme');
@@ -57,8 +75,8 @@ function buttonDown() {
 }
 
 function createBadger(scene){
-  var badgerX = game.config.width * Phaser.Math.FloatBetween(.01, 1);
-  var badgerY = game.config.height * Phaser.Math.FloatBetween(HORIZON, .9);
+  var badgerX = game.config.width * Phaser.Math.FloatBetween(.05, 1);
+  var badgerY = game.config.height * Phaser.Math.FloatBetween(HORIZON, .8);
   var badgerScale = Math.abs(((game.config.height*HORIZON)-badgerY)/200);
   var badger = scene.add.sprite(badgerX, badgerY, 'badger');
   badger.setScale(badgerScale);
@@ -67,17 +85,17 @@ function createBadger(scene){
   frames: scene.anims.generateFrameNumbers('badger',
     {
       start: 0,
-      end: 12
+      end: 5
     }),
   frameRate: 16,
   repeat: -1
 });
 badger.anims.play('badgerDance'+numBadgers);
 badger.setDepth(badgerScale);
-badgers.push[badger];
+badgers.add[badger];
 numBadgers++;
 }
-
+  
 
 const config = {
   type: Phaser.AUTO,
