@@ -4,6 +4,7 @@ var music;
 var background;
 var badgers;
 var numBadgers = 0;
+var snake;
 var startButton;
 var startGame = false;
 const MAX_BADGERS = 12;
@@ -28,6 +29,7 @@ class Example extends Phaser.Scene {
     this.load.image('startButton','start button.png');
     this.load.image('mushroom','mushroom.png');
     this.load.spritesheet('badger', 'badger.png', { frameWidth: 320, frameHeight: 300 });
+    this.load.spritesheet('snake', 'snake.png', { frameWidth: 292, frameHeight: 240 });
 
     this.load.path = '../assets/sounds/';
     this.load.audio('theme', 'badgers.wav');
@@ -43,7 +45,22 @@ class Example extends Phaser.Scene {
         startGame = true;
       });
       badgers = this.add.group();  
- }
+      mushroom1 = this.add.sprite(0,game.config.height/2,'mushroom').setOrigin(0,0).setScale(.5).setVisible(false);
+      mushroom2 = this.add.image(400,game.config.height/2,'mushroom').setOrigin(0,0).setScale(.5).setVisible(false);
+      snake = this.add.sprite(0,game.config.height/2,'snake').setOrigin(0,0).setVisible(false);
+      scene.anims.create({
+        key: 'snake',
+        frames: scene.anims.generateFrameNumbers('snake',
+          {
+            start: 0,
+            end: 3
+          }),
+        frameRate: 16,
+        repeat: -1
+      });
+      snake.anims.play('snake');    
+    }
+
   update() {
   if(startGame)
   {
@@ -69,18 +86,32 @@ class Example extends Phaser.Scene {
 if(mushroomPhase)
   {
 
-    mushroom1 = this.add.image(0,game.config.height/2,'mushroom').setOrigin(0,0).setScale(.5);
+        mushroom1.setVisible(true);
     if(++mushroomCounter>100)
     {
-      this.add.image(400,game.config.height/2,'mushroom').setOrigin(0,0).setScale(.5);
+      mushroom2.setVisible(true);
     }
     if(mushroomCounter>200)
     {
-      mushroom1.destroy();
-      badgerPhase = true;
+      mushroom1.setVisible(false);
+      mushroom2.setVisible(false);
+      snakePhase = true;
       mushroomPhase = false;
+      mushroomCounter = 0;
     }
   }
+  if(snakePhase)
+    {
+snake.visible = true;
+snake.x++;
+if(snake.x> game.config.width)
+{
+  badgerPhase = true;
+  snakePhase = false;
+  snake.x = 0;
+  snake.visible = false;
+}
+    }
 } 
 }
 function buttonDown() {
