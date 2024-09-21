@@ -17,7 +17,7 @@ var mushroom2;
 var badgerPhase = true;
 var mushroomPhase = false;
 var snakePhase = false;
-
+var badgerRound = 1;
 class Example extends Phaser.Scene {
   constructor() {
     super();
@@ -29,7 +29,7 @@ class Example extends Phaser.Scene {
     this.load.image('startButton','start button.png');
     this.load.image('mushroom','mushroom.png');
     this.load.spritesheet('badger', 'badger.png', { frameWidth: 320, frameHeight: 300 });
-    this.load.spritesheet('snake', 'snake.png', { frameWidth: 292, frameHeight: 240 });
+    this.load.spritesheet('snake', 'snake.png', { frameWidth: 294, frameHeight: 240 });
 
     this.load.path = '../assets/sounds/';
     this.load.audio('theme', 'badgers.wav');
@@ -47,7 +47,7 @@ class Example extends Phaser.Scene {
       badgers = this.add.group();  
       mushroom1 = this.add.sprite(0,game.config.height/2,'mushroom').setOrigin(0,0).setScale(.5).setVisible(false);
       mushroom2 = this.add.image(400,game.config.height/2,'mushroom').setOrigin(0,0).setScale(.5).setVisible(false);
-      snake = this.add.sprite(0,game.config.height/2,'snake').setOrigin(0,0).setVisible(false);
+      snake = this.add.sprite(-100,game.config.height/2,'snake').setOrigin(0,0).setVisible(false);
       scene.anims.create({
         key: 'snake',
         frames: scene.anims.generateFrameNumbers('snake',
@@ -64,6 +64,7 @@ class Example extends Phaser.Scene {
   update() {
   if(startGame)
   {
+    console.log(badgerRound);
     if(badgerPhase)
       if(numBadgers < MAX_BADGERS)   
        {
@@ -78,7 +79,9 @@ class Example extends Phaser.Scene {
         let allSprites = this.children.list.filter(x => x instanceof Phaser.GameObjects.Sprite && x.name=='badger');
         allSprites.forEach(x => x.destroy());
         numBadgers = 0;
+      
         
+      badgerRound = badgerRound==1? 2 : 1;      
       badgerPhase = false;
       mushroomPhase = true;
     }
@@ -86,7 +89,7 @@ class Example extends Phaser.Scene {
 if(mushroomPhase)
   {
 
-        mushroom1.setVisible(true);
+    mushroom1.setVisible(true);
     if(++mushroomCounter>100)
     {
       mushroom2.setVisible(true);
@@ -95,12 +98,22 @@ if(mushroomPhase)
     {
       mushroom1.setVisible(false);
       mushroom2.setVisible(false);
-      snakePhase = true;
+      if(badgerRound==2)
+      {
+        badgerPhase = true;
+        mushroomPhase = false;
+      }
+      if(badgerRound==1)
+      {
+        snakePhase = true;
+        mushroomPhase = false;
+      }
       mushroomPhase = false;
       mushroomCounter = 0;
     }
   }
-  if(snakePhase)
+  
+if(snakePhase)
     {
 snake.visible = true;
 snake.x++;
@@ -108,8 +121,9 @@ if(snake.x> game.config.width)
 {
   badgerPhase = true;
   snakePhase = false;
-  snake.x = 0;
+  snake.x = -100;
   snake.visible = false;
+  badgerRound = 1;
 }
     }
 } 
